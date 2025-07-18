@@ -1,5 +1,7 @@
 # Cycle Tags - Omnifocus plugin
 
+[Omnifocus forum thread](https://discourse.omnigroup.com/t/plugin-cycle-tags/71161)
+
 Cycle through mutually exclusive tags for actions and projects. (Requires Omnifocus version 4.7 or later)
 
 This workflow cycles through mutually exclusive children of a parent tag, applying the child tag to the selected project(s) or action(s).
