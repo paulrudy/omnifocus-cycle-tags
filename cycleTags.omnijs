@@ -1,0 +1,126 @@
+/*{
+    "author": "paulrudy",
+    "targets": ["omnifocus"],
+    "type": "action",
+    "identifier": "com.paulrudy.of.cycle-tags",
+    "version": "0.1",
+    "description": "Cycle through mutually exclusive tags for actions and projects.",
+    "label": "Cycle Tags",
+    "mediumLabel": "Cycle Tags",
+    "longLabel": "Cycle Tags",
+    "paletteLabel": "Cycle Tags",
+    "image": "arrow.trianglehead.2.clockwise.rotate.90"
+}*/
+(() => {
+  'use strict';
+  const parentTagName = 'Status'; // Change this string to use a different name for the parent tag
+
+  function checkVersion() {
+    const minVersion = new Version('4.7');
+    return app.userVersion.atLeast(minVersion);
+  }
+
+  async function checkStatusTagsSetup() {
+    let matchingTagRefs = flattenedTags.filter((t) => t.name === parentTagName);
+
+    if (matchingTagRefs.length > 1) {
+      await new Alert(
+        `Multiple "${parentTagName}" tags`,
+        `The parent tag name must be unique. There are currently ${matchingTagRefs.length} "${parentTagName}" tags. Please rename one of them before running this plugin.`
+      ).show();
+      return;
+    }
+
+    if (matchingTagRefs.length === 0) {
+      await new Alert(
+        `No tag "${parentTagName}"`,
+        `Please create the tag "${parentTagName}" and add at least one child tag before running this plugin.`
+      ).show();
+      return;
+    }
+
+    const parentTagRef = matchingTagRefs[0];
+    const result = { tagRefs: [] };
+
+    if (!parentTagRef.childrenAreMutuallyExclusive) {
+      const confirmationField = new Form.Field.Checkbox(
+        'confirmed',
+        'OK',
+        false
+      );
+      const confirmParentTagCreationForm = new Form();
+      confirmParentTagCreationForm.addField(confirmationField);
+      confirmParentTagCreationForm.validate = function (formObject) {
+        const validation = formObject.values['confirmed'];
+
+        return validation;
+      };
+      const confirmParentTagCreationFormObject =
+        await confirmParentTagCreationForm.show(
+          `This plugin requires the parent tag to be a mutually exclusive group.\n\nSet this up for the tag "${parentTagName}"?`,
+          'Continue'
+        );
+
+      if (confirmParentTagCreationFormObject.values['confirmed']) {
+        try {
+          console.log(
+            `Setting tag "${parentTagName}" to be a mutually exclusive group`
+          );
+          parentTagRef.childrenAreMutuallyExclusive = true;
+        } catch (error) {
+          console.log('Cycle Status Tags: ' + error);
+          await new Alert('Cycle Status Tags', error).show();
+        }
+      }
+    }
+
+    const tagRefs = parentTagRef.children;
+    if (tagRefs.length) {
+      result.tagRefs = [...tagRefs];
+      result.tagRefs.unshift('');
+    } else {
+      await new Alert(
+        `No direct children for tag "${parentTagName}"`,
+        `Please populate the tag "${parentTagName}" with at least one child tag before running this plugin.`
+      ).show();
+      return;
+    }
+
+    return result;
+  }
+
+  function cycleTag(item, { tagRefs }) {
+    const currentIndex = tagRefs.findIndex((t) => t && item.tags.includes(t)); // check all tags of item in case it has more than one match, and keep the first match in the tag list
+    const nextIndex =
+      currentIndex === -1 ? 1 : (currentIndex + 1) % tagRefs.length;
+    for (const iTag of item.tags) {
+      if (tagRefs.includes(iTag)) item.removeTag(iTag);
+    }
+    if (tagRefs[nextIndex]) item.addTag(tagRefs[nextIndex]);
+  }
+
+  const action = new PlugIn.Action(async function (selection) {
+    if (checkVersion()) {
+      const { tagRefs } = await checkStatusTagsSetup();
+      if (tagRefs.length) {
+        for (const task of selection.tasks) {
+          cycleTag(task, { tagRefs });
+        }
+        for (const project of selection.projects) {
+          cycleTag(project, { tagRefs });
+        }
+      }
+    } else {
+      await new Alert(
+        `Incompatible Omnifocus version`,
+        `This plugin requires Omnifocus version 4.7 or greater. Your version is ${app.userVersion.versionString}`
+      ).show();
+    }
+  });
+
+  action.validate = function (selection, sender) {
+    return selection.projects.length > 0 || selection.tasks.length > 0;
+  };
+
+  return action;
+})();
