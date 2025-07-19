@@ -4,7 +4,7 @@
 
 Cycle through mutually exclusive tags for actions and projects. (Requires Omnifocus version 4.7 or later)
 
-This workflow cycles through mutually exclusive children of a parent tag, applying the child tag to the selected project(s) or action(s).
+This plugin cycles through mutually exclusive children of a parent tag, applying the child tag to the selected project(s) or action(s).
 
 ![screenshot of tag group](screenshots/cycle-tags-screenshot-1.png)
 
