@@ -14,9 +14,10 @@
 (() => {
   'use strict';
   const parentTagName = 'Status'; // Change this string to use a different name for the parent tag
+  const minVersionString = '4.7';
 
   function checkVersion() {
-    const minVersion = new Version('4.7');
+    const minVersion = new Version(minVersionString);
     return app.userVersion.atLeast(minVersion);
   }
 
@@ -100,21 +101,22 @@
   }
 
   const action = new PlugIn.Action(async function (selection) {
-    if (checkVersion()) {
-      const { tagRefs } = await checkStatusTagsSetup();
-      if (tagRefs.length) {
-        for (const task of selection.tasks) {
-          cycleTag(task, { tagRefs });
-        }
-        for (const project of selection.projects) {
-          cycleTag(project, { tagRefs });
-        }
-      }
-    } else {
+    if (!checkVersion()) {
       await new Alert(
         `Incompatible Omnifocus version`,
-        `This plugin requires Omnifocus version 4.7 or greater. Your version is ${app.userVersion.versionString}`
+        `This plugin requires Omnifocus version ${minVersionString} or greater. Your version is ${app.userVersion.versionString}`
       ).show();
+      return;
+    }
+
+    const { tagRefs } = await checkStatusTagsSetup();
+    if (tagRefs.length) {
+      for (const task of selection.tasks) {
+        cycleTag(task, { tagRefs });
+      }
+      for (const project of selection.projects) {
+        cycleTag(project, { tagRefs });
+      }
     }
   });
 
