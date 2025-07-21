@@ -56,9 +56,13 @@
     }
 
     if (!parentTagRef.childrenAreMutuallyExclusive) {
+      await new Alert(
+        'Mutually exclusive tag group required',
+        `In the next dialog, you can allow this plugin to set "${parentTagName}" as a mutually exclusive tag group (or you can exit and do it manually).`
+      ).show();
       const confirmationField = new Form.Field.Checkbox(
         'confirmed',
-        'OK',
+        'Make mutually exclusive group',
         false
       );
       const confirmParentTagCreationForm = new Form();
@@ -70,7 +74,7 @@
       };
       const confirmParentTagCreationFormObject =
         await confirmParentTagCreationForm.show(
-          `This plugin requires the parent tag to be a mutually exclusive group.\n\nSet this up for the tag "${parentTagName}"?`,
+          'Set mutually exclusive?',
           'Continue'
         );
 
