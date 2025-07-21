@@ -21,7 +21,7 @@
     return app.userVersion.atLeast(minVersion);
   }
 
-  async function checkStatusTagsSetup() {
+  async function getValidTags() {
     let matchingTagRefs = flattenedTags.filter((t) => t.name === parentTagName);
 
     if (matchingTagRefs.length > 1) {
@@ -113,7 +113,7 @@
       return;
     }
 
-    const { tagRefs } = await checkStatusTagsSetup();
+    const { tagRefs } = await getValidTags();
     if (tagRefs.length) {
       for (const task of selection.tasks) {
         cycleTag(task, { tagRefs });
