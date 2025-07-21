@@ -43,6 +43,18 @@
     const parentTagRef = matchingTagRefs[0];
     const result = { tagRefs: [] };
 
+    const tagRefs = parentTagRef.children;
+    if (tagRefs.length) {
+      result.tagRefs = [...tagRefs];
+      result.tagRefs.unshift('');
+    } else {
+      await new Alert(
+        `No direct children for tag "${parentTagName}"`,
+        `Please populate the tag "${parentTagName}" with at least one child tag before running this plugin.`
+      ).show();
+      return;
+    }
+
     if (!parentTagRef.childrenAreMutuallyExclusive) {
       const confirmationField = new Form.Field.Checkbox(
         'confirmed',
@@ -73,18 +85,6 @@
           await new Alert('Cycle Status Tags', error).show();
         }
       }
-    }
-
-    const tagRefs = parentTagRef.children;
-    if (tagRefs.length) {
-      result.tagRefs = [...tagRefs];
-      result.tagRefs.unshift('');
-    } else {
-      await new Alert(
-        `No direct children for tag "${parentTagName}"`,
-        `Please populate the tag "${parentTagName}" with at least one child tag before running this plugin.`
-      ).show();
-      return;
     }
 
     return result;
