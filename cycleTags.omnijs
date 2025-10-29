@@ -13,6 +13,7 @@
 }*/
 (() => {
 	"use strict";
+
 	const parentTagName = "Status"; // Change this string to use a different name for the parent tag
 	const minVersionString = "4.7";
 
@@ -67,8 +68,8 @@
 			);
 			const confirmParentTagCreationForm = new Form();
 			confirmParentTagCreationForm.addField(confirmationField);
-			confirmParentTagCreationForm.validate = function (formObject) {
-				const validation = formObject.values["confirmed"];
+			confirmParentTagCreationForm.validate = (formObject) => {
+				const validation = formObject.values.confirmed;
 
 				return validation;
 			};
@@ -78,14 +79,14 @@
 					"Continue",
 				);
 
-			if (confirmParentTagCreationFormObject.values["confirmed"]) {
+			if (confirmParentTagCreationFormObject.values.confirmed) {
 				try {
 					console.log(
 						`Setting tag "${parentTagName}" to be a mutually exclusive group`,
 					);
 					parentTagRef.childrenAreMutuallyExclusive = true;
 				} catch (error) {
-					console.log("Cycle Status Tags: " + error);
+					console.log(`Cycle Status Tags: ${error}`);
 					await new Alert("Cycle Status Tags", error).show();
 				}
 			}
@@ -104,7 +105,7 @@
 		if (tagRefs[nextIndex]) item.addTag(tagRefs[nextIndex]);
 	}
 
-	const action = new PlugIn.Action(async function (selection) {
+	const action = new PlugIn.Action(async (selection) => {
 		if (!checkVersion()) {
 			await new Alert(
 				`Incompatible Omnifocus version`,
@@ -124,9 +125,8 @@
 		}
 	});
 
-	action.validate = function (selection, sender) {
-		return selection.projects.length > 0 || selection.tasks.length > 0;
-	};
+	action.validate = (selection, sender) =>
+		selection.projects.length > 0 || selection.tasks.length > 0;
 
 	return action;
 })();
