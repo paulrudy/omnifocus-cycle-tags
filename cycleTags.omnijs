@@ -3,7 +3,7 @@
 	"targets": ["omnifocus"],
 	"type": "action",
 	"identifier": "com.paulrudy.of.cycle-tags",
-	"version": "0.2",
+	"version": "0.3",
 	"description": "Cycle through mutually exclusive tags for actions and projects.",
 	"label": "Cycle Tags",
 	"mediumLabel": "Cycle Tags",
