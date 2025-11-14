@@ -12,7 +12,7 @@ This plugin cycles through mutually exclusive children of a parent tag, applying
 
 ## Installation
 
-Go to the [latest release](https://github.com/paulrudy/omnifocus-cycle-tags/releases/latest), download, and move/save it in your Omnifocus plugins folder.
+Go to the [latest release](https://codeberg.org/paulrudy/omnifocus-cycle-tags/releases/latest), download, and move/save it in your Omnifocus plugins folder.
 
 ## Setup
 
