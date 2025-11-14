@@ -1,5 +1,8 @@
 # Cycle Tags - Omnifocus plugin
 
+> [!IMPORTANT]
+> This project has [migrated to Codeberg](https://codeberg.org/paulrudy/omnifocus-cycle-tags) after release 0.3. All updates, issues, and pull requests will occur there.
+
 [Omnifocus forum thread](https://discourse.omnigroup.com/t/plugin-cycle-tags/71161)
 
 Cycle through mutually exclusive tags for actions and projects. (Requires Omnifocus version 4.7 or later)
